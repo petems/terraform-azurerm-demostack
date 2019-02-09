@@ -6,10 +6,10 @@ resource "random_id" "keyvaultkey" {
   byte_length = 4
 }
 
-resource "azurerm_key_vault" "demostack" {
-  name                        = "demostack-${random_id.keyvault.hex}"
-  location                    = "${azurerm_resource_group.demostack.location}"
-  resource_group_name         = "${azurerm_resource_group.demostack.name}"
+resource "azurerm_key_vault" "vaultstack" {
+  name                        = "vaultstack-${random_id.keyvault.hex}"
+  location                    = "${azurerm_resource_group.vaultstack.location}"
+  resource_group_name         = "${azurerm_resource_group.vaultstack.name}"
   enabled_for_deployment      = true
   enabled_for_disk_encryption = true
   tenant_id                   = "${var.tenant}"
@@ -19,32 +19,26 @@ resource "azurerm_key_vault" "demostack" {
   }
 
   tags {
-    name      = "Guy Barros"
+    name      = "Peter Souter"
     ttl       = "13"
-    owner     = "guy@hashicorp.com"
-    demostack = "${local.consul_join_tag_value}"
+    owner     = "psouter@hashicorp.com"
+    vaultstack = "${local.consul_join_tag_value}"
   }
 }
 
-resource "azurerm_user_assigned_identity" "demostack" {
-  resource_group_name = "${azurerm_resource_group.demostack.name}"
-  location            = "${azurerm_resource_group.demostack.location}"
+resource "azurerm_user_assigned_identity" "vaultstack" {
+  resource_group_name = "${azurerm_resource_group.vaultstack.name}"
+  location            = "${azurerm_resource_group.vaultstack.location}"
 
-  name = "${var.hostname}-demostack-vm"
+  name = "${var.hostname}-vaultstack-vm"
 }
 
-resource "azurerm_key_vault_access_policy" "demostack_vm" {
-  vault_name          = "${azurerm_key_vault.demostack.name}"
-  resource_group_name = "${azurerm_key_vault.demostack.resource_group_name}"
+resource "azurerm_key_vault_access_policy" "vaultstack_vm" {
+  vault_name          = "${azurerm_key_vault.vaultstack.name}"
+  resource_group_name = "${azurerm_key_vault.vaultstack.resource_group_name}"
 
-  # tenant_id = "${var.tenant}"
-  #  object_id = "${azurerm_user_assigned_identity.demostack.principal_id}"
-  tenant_id = "${data.azurerm_client_config.current.tenant_id}"
-
-  object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
-
-  # object_id = "${var.client_id}"
-  # application_id = "${var.client_id}"
+  tenant_id = "${var.tenant}"
+  object_id = "${azurerm_user_assigned_identity.vaultstack.principal_id}"
 
   certificate_permissions = [
     "get",
@@ -76,9 +70,9 @@ resource "azurerm_key_vault_access_policy" "demostack_vm" {
   ]
 }
 
-resource "azurerm_key_vault_key" "demostack" {
-  name      = "demostack-${random_id.keyvaultkey.hex}"
-  vault_uri = "${azurerm_key_vault.demostack.vault_uri}"
+resource "azurerm_key_vault_key" "vaultstack" {
+  name      = "vaultstack-${random_id.keyvaultkey.hex}"
+  vault_uri = "${azurerm_key_vault.vaultstack.vault_uri}"
   key_type  = "RSA"
   key_size  = 2048
 
@@ -92,9 +86,9 @@ resource "azurerm_key_vault_key" "demostack" {
   ]
 
   tags {
-    name      = "Guy Barros"
+    name      = "Peter Souter"
     ttl       = "13"
-    owner     = "guy@hashicorp.com"
-    demostack = "${local.consul_join_tag_value}"
+    owner     = "psouter@hashicorp.com"
+    vaultstack = "${local.consul_join_tag_value}"
   }
 }

@@ -52,10 +52,6 @@ sudo tee /etc/consul.d/config.json > /dev/null <<EOF
   "verify_outgoing": false,
   "verify_server_hostname": false,
   "ui": true,
- "connect":{
-  "enabled": true,
-      "proxy": {  "allow_managed_root": true  }
-      }
 }
 EOF
 
@@ -107,27 +103,6 @@ echo "--> Waiting for Consul leader"
 while [ -z "$(curl -s http://127.0.0.1:8500/v1/status/leader)" ]; do
   sleep 3
 done
-
-if [ ${enterprise} == 1 ]
-then
-sudo consul license put "${consullicense}" > /tmp/consullicense.out
-
-
-fi
-
-
-echo "--> Registering prepared query"
-curl -so /dev/null -X POST http://127.0.0.1:8500/v1/query \
-  -d @- <<BODY
-{
-  "Name": "nearest-web",
-  "Service": {
-    "Service": "web",
-    "Near": "_agent",
-    "OnlyPassing": true
-  }
-}
-BODY
 
 echo "--> Denying anonymous access to vault/ and tmp/"
 curl -so /dev/null -X PUT http://127.0.0.1:8500/v1/acl/update \

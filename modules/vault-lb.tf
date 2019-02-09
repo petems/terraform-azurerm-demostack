@@ -2,17 +2,17 @@
 resource "azurerm_public_ip" "lb" {
   count               = 1
   name                = "${var.resource_group}-pubip"
-  resource_group_name = "${azurerm_resource_group.demostack.name}"
+  resource_group_name = "${azurerm_resource_group.vaultstack.name}"
   location            = "${var.location}"
   allocation_method   = "Static"
   domain_name_label   = "${var.hostname}-lb-${count.index}"
   sku                 = "Standard"
 
   tags {
-    name      = "Guy Barros"
+    name      = "Peter Souter"
     ttl       = "13"
-    owner     = "guy@hashicorp.com"
-    demostack = "${local.consul_join_tag_value}"
+    owner     = "psouter@hashicorp.com"
+    vaultstack = "${local.consul_join_tag_value}"
   }
 }
 
@@ -20,7 +20,7 @@ resource "azurerm_public_ip" "lb" {
 
 resource "azurerm_lb" "lb" {
   name                = "${var.resource_group}-lb"
-  resource_group_name = "${azurerm_resource_group.demostack.name}"
+  resource_group_name = "${azurerm_resource_group.vaultstack.name}"
   location            = "${var.location}"
   sku                 = "Standard"
 
@@ -30,16 +30,16 @@ resource "azurerm_lb" "lb" {
   }
 
   tags {
-    name      = "Guy Barros"
+    name      = "Peter Souter"
     ttl       = "13"
-    owner     = "guy@hashicorp.com"
-    demostack = "${local.consul_join_tag_value}"
+    owner     = "psouter@hashicorp.com"
+    vaultstack = "${local.consul_join_tag_value}"
   }
 }
 
 resource "azurerm_lb_probe" "lb" {
   name                = "${var.resource_group}-probe"
-  resource_group_name = "${azurerm_resource_group.demostack.name}"
+  resource_group_name = "${azurerm_resource_group.vaultstack.name}"
   loadbalancer_id     = "${azurerm_lb.lb.id}"
   protocol            = "https"
   port                = "8200"
@@ -49,7 +49,7 @@ resource "azurerm_lb_probe" "lb" {
 
 resource "azurerm_lb_rule" "lb" {
   name                           = "${var.resource_group}-lbrule"
-  resource_group_name            = "${azurerm_resource_group.demostack.name}"
+  resource_group_name            = "${azurerm_resource_group.vaultstack.name}"
   loadbalancer_id                = "${azurerm_lb.lb.id}"
   protocol                       = "Tcp"
   frontend_port                  = "80"
@@ -62,6 +62,6 @@ resource "azurerm_lb_rule" "lb" {
 
 resource "azurerm_lb_backend_address_pool" "lb" {
   name                = "${var.resource_group}-bck-pool"
-  resource_group_name = "${azurerm_resource_group.demostack.name}"
+  resource_group_name = "${azurerm_resource_group.vaultstack.name}"
   loadbalancer_id     = "${azurerm_lb.lb.id}"
 }

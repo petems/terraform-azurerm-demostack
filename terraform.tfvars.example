@@ -14,7 +14,6 @@ client_secret = "ff02"
 owner = "example"
 public_key = "ssh"
 servers = 3
-workers = 3
 vaultlicense = ""
 consullicense = ""
 enterprise = false
