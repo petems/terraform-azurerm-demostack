@@ -12,6 +12,9 @@ EOF
 echo "--> Fetching"
 install_from_url "vault" "${vault_url}"
 
+echo "Giving Vault permission to use the mlock syscall"
+sudo setcap cap_ipc_lock=+ep $(readlink -f $(which vault))
+
 echo "--> Writing configuration"
 sudo mkdir -p /etc/vault.d
 sudo tee /etc/vault.d/config.hcl > /dev/null <<EOF
@@ -38,7 +41,7 @@ seal "azurekeyvault" {
   enviroment    = "AzurePublicCloud"
 }
 
-api_addr = "https://$(public_ip):8200"
+api_addr = "https://${public_ip}:8200"
 
 disable_mlock = true
 
@@ -91,7 +94,6 @@ if ! vault operator init -status >/dev/null; then
 
 export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 echo "ROOT TOKEN: $VAULT_TOKEN"
-vault write sys/license text=${vaultlicense}
 sudo systemctl enable vault
 sudo systemctl restart vault
 else

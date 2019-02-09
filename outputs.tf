@@ -11,3 +11,7 @@ output "service_identity_principal_id" {
 output "key_vault_name" {
   value = "${module.primarycluster.key_vault_name}"
 }
+
+output "vault_lb_address" {
+  value = "${module.primarycluster.vault_lb_address}"
+}

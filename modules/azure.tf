@@ -1,3 +1,7 @@
+data "http" "current_ip" {
+  url = "http://ipv4.icanhazip.com"
+}
+
 data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "vaultstack" {
@@ -13,7 +17,6 @@ resource "azurerm_resource_group" "vaultstack" {
 }
 
 resource "azurerm_availability_set" "vm" {
-  # count                          = "${var.servers}"
   name                         = "${var.stack_prefix}-aval-set"
   location                     = "${var.location}"
   resource_group_name          = "${azurerm_resource_group.vaultstack.name}"
@@ -70,7 +73,7 @@ resource "azurerm_network_security_group" "vaultstack-sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "443"
-    source_address_prefix      = "*"
+    source_address_prefix      = "${chomp(data.http.current_ip.body)}/32"
     destination_address_prefix = "*"
   }
 
@@ -82,7 +85,7 @@ resource "azurerm_network_security_group" "vaultstack-sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "8800"
-    source_address_prefix      = "*"
+    source_address_prefix      = "${chomp(data.http.current_ip.body)}/32"
     destination_address_prefix = "*"
   }
 
@@ -94,7 +97,7 @@ resource "azurerm_network_security_group" "vaultstack-sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
+    source_address_prefix      = "${chomp(data.http.current_ip.body)}/32"
     destination_address_prefix = "*"
   }
 
@@ -106,7 +109,19 @@ resource "azurerm_network_security_group" "vaultstack-sg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "80"
-    source_address_prefix      = "*"
+    source_address_prefix      = "${chomp(data.http.current_ip.body)}/32"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "vaultstack-run"
+    priority                   = 104
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "8000-8800"
+    source_address_prefix      = "${chomp(data.http.current_ip.body)}/32"
     destination_address_prefix = "*"
   }
 

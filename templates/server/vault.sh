@@ -38,7 +38,7 @@ seal "azurekeyvault" {
   enviroment    = "AzurePublicCloud"
 }
 
-api_addr = "https://$(public_ip):8200"
+api_addr = "https://${public_ip}:8200"
 
 disable_mlock = true
 
@@ -91,7 +91,6 @@ if ! vault operator init -status >/dev/null; then
 
 export VAULT_TOKEN=$(consul kv get service/vault/root-token)
 echo "ROOT TOKEN: $VAULT_TOKEN"
-vault write sys/license text=${vaultlicense}
 sudo systemctl enable vault
 sudo systemctl restart vault
 else

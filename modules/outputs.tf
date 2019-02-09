@@ -9,3 +9,7 @@ output "service_identity_principal_id" {
 output "key_vault_name" {
   value = "${azurerm_key_vault.vaultstack.name}"
 }
+
+output "vault_lb_address" {
+  value = "${azurerm_public_ip.lb.fqdn}"
+}

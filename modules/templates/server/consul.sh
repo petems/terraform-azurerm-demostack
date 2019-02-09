@@ -4,16 +4,8 @@ echo "==> Disable UFW"
 sudo systemctl stop ufw
 sudo systemctl disable ufw
 
-echo "==> Consul (servers)"
-if [ ${enterprise} == 0 ]
-then
 echo "--> Fetching"
 install_from_url "consul" "${consul_url}"
-else
-echo "--> Fetching"
-install_from_url "consul" "${consul_ent_url}"
-fi
-
 
 echo "--> Writing configuration"
 sudo mkdir -p /mnt/consul
@@ -51,11 +43,7 @@ sudo tee /etc/consul.d/config.json > /dev/null <<EOF
   "verify_incoming": false,
   "verify_outgoing": false,
   "verify_server_hostname": false,
-  "ui": true,
- "connect":{
-  "enabled": true,
-      "proxy": {  "allow_managed_root": true  }
-      }
+  "ui": true
 }
 EOF
 
@@ -107,14 +95,6 @@ echo "--> Waiting for Consul leader"
 while [ -z "$(curl -s http://127.0.0.1:8500/v1/status/leader)" ]; do
   sleep 3
 done
-
-if [ ${enterprise} == 1 ]
-then
-sudo consul license put "${consullicense}" > /tmp/consullicense.out
-
-
-fi
-
 
 echo "--> Registering prepared query"
 curl -so /dev/null -X POST http://127.0.0.1:8500/v1/query \

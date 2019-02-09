@@ -7,7 +7,7 @@
 
 variable "resource_group" {
   description = "The name of your Azure Resource Group."
-  default     = "Azure-Consul-Demo"
+  default     = "Azure-Vault-Stack"
 }
 
 variable "stack_prefix" {
@@ -82,16 +82,15 @@ variable "image_version" {
 
 variable "admin_username" {
   description = "Administrator user name"
-  default     = "admin"
+  default     = "admin-vaultstack"
 }
 
 variable "admin_password" {
   description = "Administrator password"
-  default     = "replace-with-your-password"
 }
 
 variable "servers" {
-  description = "The number of servers (consul, nomad, etc)."
+  description = "The number of servers"
   default     = "3"
 }
 
@@ -142,13 +141,4 @@ variable "client_id" {
 
 variable "client_secret" {
   description = "your client ID for Vault KMS Auto Unseal"
-}
-
-variable "ca_key_algorithm" {
-}
-
-variable "ca_private_key_pem" {
-}
-
-variable "ca_cert_pem" {
 }

@@ -24,11 +24,6 @@ resource "tls_cert_request" "servers" {
     "consul.service.consul",
     "servers.dc1.consul",
 
-    # Nomad
-    "nomad.service.consul",
-
-    "client.global.nomad",
-    "servers.global.nomad",
     "vault.service.consul",
     "active.vault.service.consul",
     "standby.vault.service.consul",
@@ -37,16 +32,6 @@ resource "tls_cert_request" "servers" {
     "localhost",
   ]
 
-  # Vault
-  #"${element(azurerm_public_ip.demostack-pip.*.fqdn, count.index)}",
-
-  #"${var.namespace}-servers-${count.index}.node.consul",
-
-  /*
-  ip_addresses = [
-    "127.0.0.1",
-  ]
-  */
 }
 
 # servers certificate
@@ -86,10 +71,5 @@ resource "random_id" "consul_master_token" {
 
 # Consul join key
 resource "random_id" "consul_join_tag_value" {
-  byte_length = 16
-}
-
-# Nomad gossip encryption key
-resource "random_id" "nomad_gossip_key" {
   byte_length = 16
 }

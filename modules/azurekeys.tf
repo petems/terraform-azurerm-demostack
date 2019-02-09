@@ -38,7 +38,7 @@ resource "azurerm_key_vault_access_policy" "vaultstack_vm" {
   resource_group_name = "${azurerm_key_vault.vaultstack.resource_group_name}"
 
   tenant_id = "${var.tenant}"
-  object_id = "${azurerm_user_assigned_identity.vaultstack.principal_id}"
+  object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
 
   certificate_permissions = [
     "get",

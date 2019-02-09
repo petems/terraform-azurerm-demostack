@@ -4,16 +4,8 @@ echo "==> Disable UFW"
 sudo systemctl stop ufw
 sudo systemctl disable ufw
 
-echo "==> Consul (server)"
-if [ ${enterprise} == 0 ]
-then
 echo "--> Fetching"
 install_from_url "consul" "${consul_url}"
-else
-echo "--> Fetching"
-install_from_url "consul" "${consul_ent_url}"
-fi
-
 
 echo "--> Writing configuration"
 sudo mkdir -p /mnt/consul
@@ -51,7 +43,7 @@ sudo tee /etc/consul.d/config.json > /dev/null <<EOF
   "verify_incoming": false,
   "verify_outgoing": false,
   "verify_server_hostname": false,
-  "ui": true,
+  "ui": true
 }
 EOF
 
